@@ -1,4 +1,4 @@
-export default function formatDate(date) {
+function formatDate(date) {
     var d = new Date(date),
         month = '' + (d.getMonth() + 1),
         day = '' + d.getDate(),
@@ -11,3 +11,14 @@ export default function formatDate(date) {
 
     return [year, month, day].join('-');
 }
+
+
+function showPeriod(data, dateStart, dataFinish) {
+    const start = data.findIndex(item => item.t === dateStart)
+    const end = data.findIndex(item => item.t === dataFinish)
+    console.log(start, end)
+    let obj = data.slice(start,end)
+    return obj
+  }
+
+  export {formatDate,showPeriod}

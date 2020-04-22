@@ -1,18 +1,15 @@
-import React from "react";
-import DatePicker from "react-datepicker";
-
-import "react-datepicker/dist/react-datepicker.css";
-
-// CSS Modules, react-datepicker-cssmodules.css
-// import 'react-datepicker/dist/react-datepicker-cssmodules.css';
+import React from 'react';
+import DatePicker from 'react-date-picker';
 
 export default function DatePick(props) {
 
     return (
-        <DatePicker
-            selected={ props.endDate }
-            onChange={ props.handleEndDate }
-        />
+        <div>
+            <DatePicker
+                onChange={ props.handleEndDate }
+                value={ props.endDate }
+            />
+        </div>
     );
 
 }

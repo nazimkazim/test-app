@@ -22,7 +22,6 @@ import DatePicker from 'react-date-picker';
 
 export default function DatePick(props) {
 
-
     return (
         <div>
             <DatePicker
