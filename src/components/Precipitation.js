@@ -62,31 +62,31 @@ export default function AutoGrid() {
 
 import React, { Component } from 'react';
 import LineGraph from './LineGraph';
-import temperatureData from '../temperature.json';
+import precipitationData from '../precipitation.json';
 import DatePickerStart from './DatePickerStart';
 import DatePickerEnd from './DatePickerEnd';
-import {formatDate, showPeriod} from './Utils'
+import List from './Labels';
+import { formatDate } from './Utils';
 
 export default class Test extends Component {
     constructor (props) {
         super(props);
         this.state = {
-            tempData: [],
+            precipData: [],
             startDate: '',
-            endDate: ''
+            endDate: '',
+            rangeIsWrong: false
         };
         this.handleStartDateChange = this.handleStartDateChange.bind(this);
     }
 
     componentDidMount() {
-        this.setState({ tempData: temperatureData, startDate: new Date(), endDate: new Date() });
+        this.setState({ precipData: precipitationData, startDate: new Date(), endDate: new Date() });
     }
 
-    /* shouldComponentUpdate(nextProps, nextState) {
-        if (this.state.tempData !== nextState.tempData) {
-            return false;
-        }
-    } */
+    shouldComponentUpdate(nextProps, prevState) {
+        return this.state.precipData !== prevState.precipData;
+    }
 
     handleStartDateChange = (date) => {
         console.log(date);
@@ -100,35 +100,73 @@ export default class Test extends Component {
 
     showPeriod = (e) => {
         e.preventDefault();
-        console.log('clicked')
-        const start = this.state.tempData.findIndex(item => item.t === formatDate(this.state.startDate))
-        const end = this.state.tempData.findIndex(item => item.t === formatDate(this.state.endDate))
-        console.log(start, end)
-        let obj = this.state.tempData.slice(start,end)
+        console.log('clicked');
+        const start = this.state.precipData.findIndex(item => item.t === formatDate(this.state.startDate));
+        const end = this.state.precipData.findIndex(item => item.t === formatDate(this.state.endDate));
+        if (start === -1 || end === -1) {
+            this.setState({
+                rangeIsWrong: true
+            });
+        }
+        if (start >= end) {
+            this.setState({
+                rangeIsWrong: true
+            });
+        }
+
+        setTimeout(() => {
+            this.setState({
+                rangeIsWrong: false
+            });
+        }, 3000);
+
+        console.log(start, end);
+        let obj = this.state.precipData.slice(start, end);
         this.setState({
-            tempData:obj
-        })
-        return obj
-    }
+            precipData: obj
+        });
+    };
+
+    resetPrecip = (e) => {
+        e.preventDefault();
+        this.setState({
+            precipData: precipitationData, startDate: new Date(), endDate: new Date(), rangeIsWrong: false
+        });
+    };
 
 
     render() {
         console.log(formatDate(this.state.startDate));
         console.log(formatDate(this.state.endDate));
+
+
         return (
             <div className="columns">
-                <div className="column">
-                    <ul>
-                        <li>температура</li>
-                        <li>осадки</li>
-                    </ul>
+                <div className="column is-3" style={ { padding: '100px' } }>
+                    <List />
                 </div>
                 <div className="column">
-                    <DatePickerStart startDate={ this.state.startDate } handleStartDate={ this.handleStartDateChange } />
-                    <DatePickerEnd endDate={ this.state.endDate } handleEndDate={ this.handleEndDateChange } />
-                    <LineGraph data={ this.state.tempData } />
+                    <nav class="level">
+                        <div class="level-item has-text-centered"></div>
+                        <div class="level-item has-text-centered">
+                            <p class="heading">Start of the period</p>
+                            <hr />
+                            <DatePickerStart startDate={ this.state.startDate } handleStartDate={ this.handleStartDateChange } />
+                        </div>
+                        <div class="level-item has-text-centered">
+                            <p class="heading">End of the period</p>
+                            <hr />
+                            <DatePickerEnd endDate={ this.state.endDate } handleEndDate={ this.handleEndDateChange } />
+                        </div>
+                        <div class="level-item has-text-centered"></div>
+                    </nav>
+                    <LineGraph data={ this.state.precipData } />
+                    <button className="button is-success" onClick={ this.showPeriod }>Show for period</button>
+                    <button className="button is-info" onClick={ this.resetPrecip }>Reset period</button>
+                    { this.state.rangeIsWrong && (<div className="notification is-primary">Range is wrong, please reset the range</div>) }
+
                 </div>
-                <button onClick={this.showPeriod}>Show for period</button>
+
             </div>
         );
     }

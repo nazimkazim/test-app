@@ -1,31 +1,18 @@
 import React from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-
-const useStyles = makeStyles((theme) => ({
-  root: {
-    width: '100%',
-    maxWidth: 360,
-    backgroundColor: theme.palette.background.paper,
-  },
-}));
+import {Link} from 'react-router-dom'
 
 
 
-export default function SimpleList() {
-  const classes = useStyles();
+export default function List() {
 
-  return (
-    <div className={classes.root}>
-      <List component="nav">
-        <ListItem button>
-          Температура
-        </ListItem>
-        <ListItem button>
-          Осадки
-        </ListItem>
-      </List>
-    </div>
-  );
+    return (
+        <article class="panel is-info">
+            <div class="panel-block">
+                <Link to="/">Температура</Link>
+            </div>
+            <div class="panel-block">
+                <Link to="/precipitation">Осадки</Link>
+            </div>
+        </article>
+    );
 }
