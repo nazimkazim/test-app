@@ -87,7 +87,7 @@ export default class Test extends Component {
         fetch('https://res.cloudinary.com/nzmai/raw/upload/v1587611279/precipitation_weoi3z.json')
             .then(response => response.json())
             .then(data => {
-                this.setState({ precipData: data, startDate: new Date(), endDate: new Date(), loading:false });
+                this.setState({ precipData: data, startDate: new Date(), endDate: new Date(), loading: false });
 
             });
 
@@ -138,10 +138,11 @@ export default class Test extends Component {
 
     resetPrecip = (e) => {
         e.preventDefault();
+        this.setState({ loading: true });
         fetch('https://res.cloudinary.com/nzmai/raw/upload/v1587611279/precipitation_weoi3z.json')
             .then(response => response.json())
             .then(data => {
-                this.setState({ tempData: data, startDate: new Date(), endDate: new Date() });
+                this.setState({ precipData: data, startDate: new Date(), endDate: new Date(), loading: false });
             });
     };
 
