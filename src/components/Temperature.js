@@ -62,9 +62,10 @@ export default function AutoGrid() {
 
 import React, { Component } from 'react';
 import LineGraph from './LineGraph';
-import temperatureData from '../temperature.json';
+//import temperatureData from '../temperature.json';
 import DatePickerStart from './DatePickerStart';
 import DatePickerEnd from './DatePickerEnd';
+import Loader from './Loader';
 import List from './Labels';
 import { formatDate } from './Utils';
 
@@ -75,13 +76,19 @@ export default class Test extends Component {
             tempData: [],
             startDate: '',
             endDate: '',
-            rangeIsWrong: false
+            rangeIsWrong: false,
+            loading: true
         };
         this.handleStartDateChange = this.handleStartDateChange.bind(this);
     }
 
     componentDidMount() {
-        this.setState({ tempData: temperatureData, startDate: new Date(), endDate: new Date() });
+        fetch('https://res.cloudinary.com/nzmai/raw/upload/v1587609158/temperature_h6ykh4.json')
+            .then(response => response.json())
+            .then(data => {
+                this.setState({ tempData: data, startDate: new Date(), endDate: new Date(), loading: false });
+
+            });
     }
 
     shouldComponentUpdate(nextProps, prevState) {
@@ -129,9 +136,13 @@ export default class Test extends Component {
 
     resetTemp = (e) => {
         e.preventDefault();
-        this.setState({
-            tempData: temperatureData, startDate: new Date(), endDate: new Date(), rangeIsWrong: false
-        });
+        this.setState({ loading: true });
+        fetch('https://res.cloudinary.com/nzmai/raw/upload/v1587609158/temperature_h6ykh4.json')
+            .then(response => response.json())
+            .then(data => {
+                this.setState({ tempData: data, startDate: new Date(), endDate: new Date(), loading: false });
+
+            });
     };
 
 
@@ -146,23 +157,33 @@ export default class Test extends Component {
                     <List />
                 </div>
                 <div className="column">
-                    <nav class="level">
-                        <div class="level-item has-text-centered"></div>
-                        <div class="level-item has-text-centered">
-                            <p class="heading">Start of the period</p>
-                            <hr />
-                            <DatePickerStart startDate={ this.state.startDate } handleStartDate={ this.handleStartDateChange } />
-                        </div>
-                        <div class="level-item has-text-centered">
-                            <p class="heading">End of the period</p>
-                            <hr />
-                            <DatePickerEnd endDate={ this.state.endDate } handleEndDate={ this.handleEndDateChange } />
-                        </div>
-                        <div class="level-item has-text-centered"></div>
-                    </nav>
-                    <LineGraph data={ this.state.tempData } />
-                    <button className="button is-success" onClick={ this.showPeriod }>Show for period</button>
-                    <button className="button is-info" onClick={ this.resetTemp }>Reset period</button>
+                    { this.state.loading ? (
+                        <>
+                            <Loader type="bars" color="#357EDD" />
+                            <p>Загружается...</p>
+                        </>
+                    ) : (
+                            <>
+                                <nav class="level">
+                                    <div class="level-item has-text-centered"></div>
+                                    <div class="level-item has-text-centered">
+                                        <p class="heading">Start of the period</p>
+                                        <hr />
+                                        <DatePickerStart startDate={ this.state.startDate } handleStartDate={ this.handleStartDateChange } />
+                                    </div>
+                                    <div class="level-item has-text-centered">
+                                        <p class="heading">End of the period</p>
+                                        <hr />
+                                        <DatePickerEnd endDate={ this.state.endDate } handleEndDate={ this.handleEndDateChange } />
+                                    </div>
+                                    <div class="level-item has-text-centered"></div>
+                                </nav>
+                                <LineGraph data={ this.state.tempData } />
+                                <button className="button is-success" onClick={ this.showPeriod }>Show for period</button>
+                                <button className="button is-info" onClick={ this.resetTemp }>Reset period</button>
+                            </>
+                        ) }
+
                     { this.state.rangeIsWrong && (<div className="notification is-primary">Range is wrong, please reset the range</div>) }
 
                 </div>
